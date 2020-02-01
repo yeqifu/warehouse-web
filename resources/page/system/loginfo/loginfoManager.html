@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/layuimini.css" media="all">
+    <link rel="stylesheet" href="../../../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <title>登陆日志管理</title>
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 搜索信息开始 -->
+            <fieldset class="layui-elem-field layuimini-search">
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">登陆名</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="loginname" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">登陆IP</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="loginip" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">开始时间</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="startTime" id="startTime" autocomplete="off"
+                                        class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">结束时间</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="endTime" id="endTime" autocomplete="off"
+                                        class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-block" style="text-align: center;">
+                                <a class="layui-btn layui-btn-sm layui-btn-radius" lay-submit=""
+                                    lay-filter="data-search-btn"><i class="fa fa-search"></i> 搜索</a>
+                                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm" lay-submit=""
+                                    lay-filter="data-search-btn"><i class="fa fa-refresh"></i> 重置</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+            <!-- 搜索信息结束 -->
+
+            <!-- 表格开始 -->
+            <table class="layui-hide" id="loginfoTable" lay-filter="currentTableFilter"></table>
+            <script type="text/html" id="loginfoToolBar">
+                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger data-count-delete" lay-event="delete">批量删除</a>
+            </script>
+            <script type="text/html" id="loginfoTableBar">
+                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            </script>
+            <!-- 表格结束 -->
+
+        </div>
+    </div>
+    <script src="../../../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+    <script src="../../../lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+    <script src="../../../lib/common/jquery.cookie.min.js" charset="utf-8"></script>
+    <script src="../../../lib/common/common.js" charset="utf-8"></script>
+    <script>
+        layui.use(['form', 'table', 'laydate', 'layer'], function () {
+            var $ = layui.jquery;
+            var form = layui.form;
+            var table = layui.table;
+            var laydate = layui.laydate;
+            var layer = layui.layer;
+
+            //渲染时间选择器
+            laydate.render({
+                elem: '#startTime',
+                type: 'datetime'
+            });
+            laydate.render({
+                elem: '#endTime',
+                type: 'datetime'
+            });
+
+            table.render({
+                elem: '#loginfoTable',
+                toolbar: '#loginfoToolBar',
+                url: api + '/loginfo/loadAllLoginfo',
+                cols: [[
+                    { type: "checkbox", fixed: "left" },
+                    { field: 'id', title: 'ID', align: "center"  },
+                    { field: 'loginname', title: '登陆名称' , align: "center" },
+                    { field: 'loginip', title: '登陆IP' , align: "center" },
+                    { field: 'logintime', title: '登陆时间', align: "center"  },
+                    { title: '操作', minWidth: 50, templet: '#loginfoTableBar', fixed: "right", align: "center" }
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true
+            });
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                var result = JSON.stringify(data.field);
+
+                //执行搜索重载
+                table.reload('loginfoTable', {
+                    page: {
+                        curr: 1
+                    }
+                    , where: {
+                        searchParams: result
+                    }
+                }, 'data');
+
+                return false;
+            });
+
+            // 监听添加操作
+            $(".data-add-btn").on("click", function () {
+                layer.msg('添加数据');
+            });
+
+            // 监听删除操作
+            $(".data-delete-btn").on("click", function () {
+                var checkStatus = table.checkStatus('loginfoTable')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            });
+
+            //监听表格复选框选择
+            table.on('checkbox(currentTableFilter)', function (obj) {
+                console.log(obj)
+            });
+
+            table.on('tool(currentTableFilter)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'edit') {
+                    layer.alert('编辑行：<br>' + JSON.stringify(data))
+                } else if (obj.event === 'delete') {
+                    layer.confirm('真的删除行么', function (index) {
+                        obj.del();
+                        layer.close(index);
+                    });
+                }
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

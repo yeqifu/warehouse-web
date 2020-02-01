@@ -49,10 +49,10 @@ layui.define(["element", "jquery"], function (exports) {
                 if (data == null) {
                     layuimini.msg_error('暂无菜单信息');
                 } else {
-                    layuimini.initHome(data.homeInfo);
-                    layuimini.initLogo(data.logoInfo);
-                    layuimini.initClear(data.clearInfo);
-                    layuimini.initMenu(data.menuInfo);
+                    layuimini.initHome();
+                    layuimini.initLogo();
+                    layuimini.initClear();
+                    layuimini.initMenu(data);
                     layuimini.initTab();
                 }
             }).fail(function () {

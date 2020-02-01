@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" href="images/favicon.ico">
+    <link rel="icon" href="resources/images/favicon.ico">
     <link rel="stylesheet" href="resources/lib/layui-v2.5.5/css/layui.css" media="all">
     <link rel="stylesheet" href="resources/css/layuimini.css" media="all">
     <link rel="stylesheet" href="resources/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
@@ -96,16 +96,21 @@
 
 </div>
 
-
+<script src="resources/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="resources/lib/layui-v2.5.5/layui.js?v=1.0.4" charset="utf-8"></script>
 <script src="resources/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="resources/lib/common/jquery.cookie.min.js" charset="utf-8"></script>
+<script src="resources/lib/common/common.js" charset="utf-8"></script>
 <script>
     layui.use(['element', 'layer', 'layuimini'], function () {
         var $ = layui.jquery,
             element = layui.element,
             layer = layui.layer;
 
-        layuimini.init('resources/api/init.json');
+        layuimini.init(api+'login/loadIndexMenu');
+        // layuimini.init('resources/api/init.json');
+
+
 
         $('.login-out').on("click", function () {
             layer.msg('退出登录成功', function () {

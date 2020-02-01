@@ -1,0 +1,5 @@
+{
+    "files.autoSave": "onFocusChange",
+    "liveServer.settings.port": 8081,
+    "liveServer.settings.root": ".."
+}

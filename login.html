@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>后台管理-登陆</title>
+    <title>后台管理-登录</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -41,15 +41,15 @@
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username" for="username"></label>
-                    <input type="text" name="username" lay-verify="required|account" placeholder="用户名或者邮箱" autocomplete="off" class="layui-input" value="admin">
+                    <input type="text" name="username" lay-verify="required" placeholder="用户名或者邮箱" autocomplete="off" class="layui-input" value="">
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-password" for="password"></label>
-                    <input type="password" name="password" lay-verify="required|password" placeholder="密码" autocomplete="off" class="layui-input" value="123456">
+                    <input type="password" name="password" lay-verify="required" placeholder="密码" autocomplete="off" class="layui-input" value="123456">
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-vercode" for="captcha"></label>
-                    <input type="text" name="captcha" lay-verify="required|captcha" placeholder="图形验证码" autocomplete="off" class="layui-input verification captcha" value="xszg">
+                    <input type="text" name="captcha" lay-verify="required" placeholder="图形验证码" autocomplete="off" class="layui-input verification captcha" value="xszg">
                     <div class="captcha-img">
                         <img id="captchaPic" src="resources/images/captcha.jpg">
                     </div>
@@ -67,6 +67,8 @@
 <script src="resources/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="resources/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script src="resources/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+<script src="resources/lib/common/jquery.cookie.min.js" charset="utf-8"></script>
+<script src="resources/lib/common/common.js" charset="utf-8"></script>
 <script>
     layui.use(['form'], function () {
         var form = layui.form,
@@ -85,22 +87,30 @@
 
         // 进行登录操作
         form.on('submit(login)', function (data) {
-            data = data.field;
-            if (data.username == '') {
-                layer.msg('用户名不能为空');
-                return false;
-            }
-            if (data.password == '') {
-                layer.msg('密码不能为空');
-                return false;
-            }
-            if (data.captcha == '') {
-                layer.msg('验证码不能为空');
-                return false;
-            }
-            layer.msg('登录成功', function () {
-                window.location = 'index.html';
+            var btn=$(this);
+            btn.text("登录中...").attr("disabled","disabled").addClass("layui-disable");
+            $.ajax({
+                url:api+"login/doLogin",
+                type:"post",
+                data:{loginname:data.field.username,password:data.field.password,captcha:data.field.captcha},
+                success:function(res){
+                    layer.msg(res.msg);
+                    if(res.code!=200){
+                        btn.text("登 录").attr("disabled",false).removeClass("layui-disabled");
+                    }else{
+                        //把token写到cookie
+                        $.cookie('TOKEN',res.token,{expires:7});
+
+                        window.location.href="/warehouse-web/index.html";
+                    }
+                },
+                error:function(){
+                    layer.msg("登录失败");
+                    btn.text("登 录").attr("disabled","").removeClass("layui-disabled");
+                }
             });
+
+
             return false;
         });
     });

@@ -1,0 +1,236 @@
+{
+    "system": {
+        "id": 1,
+        "pid": 0,
+        "title": "系统管理",
+        "href": "",
+        "icon": "fa fa-gear",
+        "spread": false,
+        "typecode": "system",
+        "target": "_self",
+        "child": [
+            {
+                "id": 13,
+                "pid": 1,
+                "title": "系统管理",
+                "href": "",
+                "icon": "fa fa-gear",
+                "spread": false,
+                "typecode": "system",
+                "target": "_self",
+                "child": [
+                    {
+                        "id": 15,
+                        "pid": 13,
+                        "title": "部门管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 16,
+                        "pid": 13,
+                        "title": "菜单管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 17,
+                        "pid": 13,
+                        "title": "角色管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 18,
+                        "pid": 13,
+                        "title": "用户管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    }
+                ]
+            },
+            {
+                "id": 14,
+                "pid": 1,
+                "title": "其它管理",
+                "href": "",
+                "icon": "fa fa-gear",
+                "spread": false,
+                "typecode": "system",
+                "target": "_self",
+                "child": [
+                    {
+                        "id": 19,
+                        "pid": 14,
+                        "title": "登录日志",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 20,
+                        "pid": 14,
+                        "title": "数据源监控",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 21,
+                        "pid": 14,
+                        "title": "公告管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 22,
+                        "pid": 14,
+                        "title": "图标查询",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "system",
+                        "target": "_self"
+                    }
+                ]
+            }
+        ]
+    },
+    "business": {
+        "id": 2,
+        "pid": 0,
+        "title": "业务管理",
+        "href": "",
+        "icon": "fa fa-gear",
+        "spread": false,
+        "typecode": "business",
+        "target": "_self",
+        "child": [
+            {
+                "id": 3,
+                "pid": 2,
+                "title": "基础数据管理",
+                "href": "",
+                "icon": "fa fa-gear",
+                "spread": false,
+                "typecode": "business",
+                "target": "_self",
+                "child": [
+                    {
+                        "id": 6,
+                        "pid": 3,
+                        "title": "商品管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 7,
+                        "pid": 3,
+                        "title": "客户管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 8,
+                        "pid": 3,
+                        "title": "供应商管理",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "pid": 2,
+                "title": "进货管理",
+                "href": "",
+                "icon": "fa fa-gear",
+                "spread": false,
+                "typecode": "business",
+                "target": "_self",
+                "child": [
+                    {
+                        "id": 9,
+                        "pid": 4,
+                        "title": "商品进货",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 10,
+                        "pid": 4,
+                        "title": "商品销售",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    }
+                ]
+            },
+            {
+                "id": 5,
+                "pid": 2,
+                "title": "销售管理",
+                "href": "",
+                "icon": "fa fa-gear",
+                "spread": false,
+                "typecode": "business",
+                "target": "_self",
+                "child": [
+                    {
+                        "id": 11,
+                        "pid": 5,
+                        "title": "商品销售",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    },
+                    {
+                        "id": 12,
+                        "pid": 5,
+                        "title": "销售退货",
+                        "href": "",
+                        "icon": "fa fa-gear",
+                        "spread": false,
+                        "typecode": "business",
+                        "target": "_self"
+                    }
+                ]
+            }
+        ]
+    }
+}

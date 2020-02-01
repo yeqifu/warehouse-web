@@ -9,7 +9,7 @@
           "href": "",
           "icon": "fa fa-home",
           "target": "_self",
-		  "spread": "true",
+		      "spread": "true",
           "child": [
             {
               "title": "部门管理",
@@ -23,18 +23,18 @@
               "icon": "fa fa-tachometer",
               "target": "_self"
             },
-			{
-			  "title": "角色管理",
-			  "href": "page/welcome-2.html",
-			  "icon": "fa fa-tachometer",
-			  "target": "_self"
-			},
-			{
-			  "title": "用户管理",
-			  "href": "page/welcome-2.html",
-			  "icon": "fa fa-tachometer",
-			  "target": "_self"
-			}
+            {
+              "title": "角色管理",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "用户管理",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
           ]
         },
         {
@@ -54,18 +54,18 @@
               "icon": "fa fa-tachometer",
               "target": "_self"
             },
-			{
-			  "title": "公告管理",
-			  "href": "page/welcome-2.html",
-			  "icon": "fa fa-tachometer",
-			  "target": "_self"
-			},
-			{
-			  "title": "图标查询",
-			  "href": "page/welcome-2.html",
-			  "icon": "fa fa-tachometer",
-			  "target": "_self"
-			}
+            {
+              "title": "公告管理",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "图标查询",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
           ]
         },
         {
@@ -119,7 +119,7 @@
           "href": "",
           "icon": "fa fa-snowflake-o",
           "target": "",
-		  "spread": "true",
+		      "spread": "true",
           "child": [
             {
               "title": "按钮示例",
@@ -142,7 +142,7 @@
       "icon": "fa fa-lemon-o",
       "child": [
         {
-          "title": "业务管理",
+          "title": "基础数据管理",
           "href": "page/icon.html",
           "icon": "fa fa-dot-circle-o",
           "child": [
@@ -158,12 +158,12 @@
               "icon": "fa fa-tachometer",
               "target": "_self"
             },
-			{
-			  "title": "供应商管理",
-			  "href": "page/welcome-2.html",
-			  "icon": "fa fa-tachometer",
-			  "target": "_self"
-			}
+            {
+              "title": "供应商管理",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
           ]
         },
         {
