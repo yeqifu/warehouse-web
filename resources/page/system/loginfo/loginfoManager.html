@@ -19,7 +19,7 @@
             <fieldset class="layui-elem-field layuimini-search">
                 <legend>搜索信息</legend>
                 <div style="margin: 10px 10px 10px 10px">
-                    <form class="layui-form layui-form-pane" action="">
+                    <form class="layui-form layui-form-pane" action="" id="searchFrm">
                         <div class="layui-form-item">
                             <div class="layui-inline">
                                 <label class="layui-form-label">登陆名</label>
@@ -36,15 +36,13 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">开始时间</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="startTime" id="startTime" autocomplete="off"
-                                        class="layui-input">
+                                    <input type="text" name="startTime" id="startTime" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">结束时间</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="endTime" id="endTime" autocomplete="off"
-                                        class="layui-input">
+                                    <input type="text" name="endTime" id="endTime" autocomplete="off" class="layui-input">
                                 </div>
                             </div>
                         </div>
@@ -52,8 +50,8 @@
                             <div class="layui-block" style="text-align: center;">
                                 <a class="layui-btn layui-btn-sm layui-btn-radius" lay-submit=""
                                     lay-filter="data-search-btn"><i class="fa fa-search"></i> 搜索</a>
-                                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm" lay-submit=""
-                                    lay-filter="data-search-btn"><i class="fa fa-refresh"></i> 重置</a>
+                                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm"
+                                    onclick="javascript:$('#searchFrm')[0].reset()" lay-filter="data-search-btn"><i class="fa fa-refresh"></i> 重置</a>
                             </div>
                         </div>
                     </form>
@@ -62,12 +60,12 @@
             <!-- 搜索信息结束 -->
 
             <!-- 表格开始 -->
-            <table class="layui-hide" id="loginfoTable" lay-filter="currentTableFilter"></table>
+            <table class="layui-hide" id="loginfoTable" lay-filter="loginfoTable"></table>
             <script type="text/html" id="loginfoToolBar">
-                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger data-count-delete" lay-event="delete">批量删除</a>
+                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger data-count-delete" lay-event="batchDelete">批量删除</a>
             </script>
             <script type="text/html" id="loginfoTableBar">
-                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" lay-event="delete">删除</a>
             </script>
             <!-- 表格结束 -->
 
@@ -96,65 +94,79 @@
                 type: 'datetime'
             });
 
-            table.render({
+            var tableIns = table.render({
                 elem: '#loginfoTable',
                 toolbar: '#loginfoToolBar',
                 url: api + '/loginfo/loadAllLoginfo',
                 cols: [[
-                    { type: "checkbox", fixed: "left" },
-                    { field: 'id', title: 'ID', align: "center"  },
-                    { field: 'loginname', title: '登陆名称' , align: "center" },
-                    { field: 'loginip', title: '登陆IP' , align: "center" },
-                    { field: 'logintime', title: '登陆时间', align: "center"  },
-                    { title: '操作', minWidth: 50, templet: '#loginfoTableBar', fixed: "right", align: "center" }
+                    {type: "checkbox",fixed: "left"}, 
+                    {field: 'id',title: 'ID',align: "center"}, 
+                    {field: 'loginname',title: '登陆名称',align: "center"}, 
+                    {field: 'loginip',title: '登陆IP',align: "center"}, 
+                    {field: 'logintime',title: '登陆时间',align: "center"}, 
+                    {fixed: "right",title: '操作',toolbar: '#loginfoTableBar',align: "center"}
                 ]],
-                limits: [10, 15, 20, 25, 50, 100],
-                limit: 15,
                 page: true
             });
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                var result = JSON.stringify(data.field);
-
+                //序列化搜索表单的数据
+                var params = $("#searchFrm").serialize();
                 //执行搜索重载
                 table.reload('loginfoTable', {
                     page: {
                         curr: 1
-                    }
-                    , where: {
-                        searchParams: result
-                    }
-                }, 'data');
-
+                    },
+                    url: api + 'loginfo/loadAllLoginfo?' + params
+                });
                 return false;
             });
 
-            // 监听添加操作
-            $(".data-add-btn").on("click", function () {
-                layer.msg('添加数据');
+
+            //监听表头工具条事件
+            table.on('toolbar(loginfoTable)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'batchDelete':
+                        var checkStatus = table.checkStatus('loginfoTable');
+                        var data = checkStatus.data;
+                        var length = checkStatus.data.length;
+                        console.log(checkStatus.data);
+                        console.log(checkStatus.data.length);
+                        if (length == 0) {
+                            layer.msg("请选中要删除的行数据！");
+                        } else {
+                            layer.confirm("真的要删除选中的这些数据吗？", function (index) {
+                                var params = "";
+                                $.each(data, function (index, item) {
+                                    if (index == 0) {
+                                        params += "ids=" + item.id;
+                                    } else {
+                                        params += "&ids=" + item.id;
+                                    }
+                                });
+                                $.post(api + "loginfo/batchDeleteLoginfo", params, function (res) {
+                                    layer.msg(res.msg);
+                                    tableIns.reload();
+                                    layer.close(index);
+                                });
+                            });
+                        }
+                        break;
+                };
             });
 
-            // 监听删除操作
-            $(".data-delete-btn").on("click", function () {
-                var checkStatus = table.checkStatus('loginfoTable')
-                    , data = checkStatus.data;
-                layer.alert(JSON.stringify(data));
-            });
-
-            //监听表格复选框选择
-            table.on('checkbox(currentTableFilter)', function (obj) {
-                console.log(obj)
-            });
-
-            table.on('tool(currentTableFilter)', function (obj) {
+            //监听行工具条的事件
+            table.on('tool(loginfoTable)', function (obj) {
                 var data = obj.data;
-                if (obj.event === 'edit') {
-                    layer.alert('编辑行：<br>' + JSON.stringify(data))
-                } else if (obj.event === 'delete') {
-                    layer.confirm('真的删除行么', function (index) {
-                        obj.del();
-                        layer.close(index);
+                if (obj.event === 'delete') {
+                    layer.confirm('真的要删除【' + data.loginname + '】这条数据吗？',function(index){
+                        $.post(api+"loginfo/deleteLoginfo",{ id: data.id }, function (res) {
+                            layer.msg(res.msg);
+                            obj.del();
+                            layer.close(index);
+                        });
                     });
                 }
             });
