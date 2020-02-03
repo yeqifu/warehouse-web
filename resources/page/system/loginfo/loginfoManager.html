@@ -62,10 +62,10 @@
             <!-- 表格开始 -->
             <table class="layui-hide" id="loginfoTable" lay-filter="loginfoTable"></table>
             <script type="text/html" id="loginfoToolBar">
-                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger data-count-delete" lay-event="batchDelete">批量删除</a>
+                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-danger data-count-delete" lay-event="batchDelete"><i class="fa fa-trash-o"></i> 批量删除</a>
             </script>
             <script type="text/html" id="loginfoTableBar">
-                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" lay-event="delete">删除</a>
+                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" lay-event="delete"><i class="fa fa-trash-o"></i> 删除</a>
             </script>
             <!-- 表格结束 -->
 
@@ -98,6 +98,7 @@
                 elem: '#loginfoTable',
                 toolbar: '#loginfoToolBar',
                 url: api + '/loginfo/loadAllLoginfo',
+                height: "full-205",
                 cols: [[
                     {type: "checkbox",fixed: "left"}, 
                     {field: 'id',title: 'ID',align: "center"}, 
