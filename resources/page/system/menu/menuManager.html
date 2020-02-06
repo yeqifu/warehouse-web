@@ -167,9 +167,9 @@
                 elem: '#menuTable',
                 cellMinWidth: true,
                 cols: [
-                    { type: "numbers" },
+                    { type: "numbers",title:'编号',align:"center",width:70 },
                     { field: 'title', title: '权限和菜单名称', width: 200 },
-                    { field: 'id', title: 'ID', align: "center", width: 70},
+                    { field: 'id', title: 'ID', align:"center", width:70},
                     { field: 'pid', title: 'PID', align: "center", width: 70},
                     { field: 'type', title: '类型', align: "center", width: 127,templet: function (d) {
                         if (d.type == 'topmenu') {

@@ -151,19 +151,18 @@
                     isPidData: true  // 是否是pid形式数据
                 },
                 elem: '#deptTable',
-                cellMinWidth: true,
                 cols: [
                     { type: "numbers" },
                     { field: 'title', title: '部门名称', width: 200 },
-                    { field: 'id', title: 'ID', align: "center", width: 70},
-                    { field: 'pid', title: 'PID', align: "center", width: 70},
-                    { field: 'remark', title: '部门备注', align: "center", width: 127 },
+                    { field: 'id', title: 'ID', align: "center", width: 80},
+                    { field: 'pid', title: 'PID', align: "center", width: 80},
+                    { field: 'remark', title: '部门备注', align: "center", width: 180 },
                     { field: 'address', title: '部门地址', align: "center", width: 120 },
-                    { field: 'createtime', title: '创建时间', align: "center", width: 170 },
+                    { field: 'createtime', title: '创建时间', align: "center", width: 180 },
                     { field: 'ordernum', title: '排序码', align: "center", width: 80 },
-                    { field: 'spread',  title: '是否展开', align: "center",width: 110,templet:'#spreadTpl'},
-                    { field: 'available',  title: '是否可用', align: "center",width: 110,templet:'#availableTpl'},
-                    { fixed: "right",title: '操作', templet: '#deptTableBar', width: 170,align: "center"}
+                    { field: 'spread', title: '是否展开', align: "center",templet:'#spreadTpl',width: 150},
+                    { field: 'available', title: '是否可用', align: "center",templet:'#availableTpl',width: 150},
+                    { fixed: "right",title: '操作', templet: '#deptTableBar', align: "center", width: 190}
                 ],
                 reqData: function (data, callback) {
                     // 在这里写ajax请求，通过callback方法回调数据
