@@ -10,11 +10,11 @@ function openDeptSelecter(pid,callBack){
         
         selDeptIndex = layer.open({
             type: 1,
-            title: '添加部门',
+            title: '请选择部门',
             btn:['<span class="layui-icon layui-icon-ok"> 确定</span>'],
             btnAlign:'c',
             content:'<div style="padding: 15px;"><table class="layui-hide" id="deptSelectTable" lay-filter="deptTable"></table></div>',
-            area: ['811px', '500px'],
+            area: ['850px', '500px'],
             yes:function(index){
                 //得到选择的ID和名称
                 var ckData = tableSelectIns.checkStatus();
@@ -37,7 +37,7 @@ function openDeptSelecter(pid,callBack){
                         { type: "radio" ,title:'请选择',width:75,align:"center"},
                         { field: 'title', title: '部门名称',width:273},
                         { field: 'remark', title: '部门备注',width:233, align: "center"},
-                        { field: 'address', title: '部门地址',width:150, align: "center"},
+                        { field: 'address', title: '部门地址',width:165, align: "center"},
                     ],
                     reqData: function (data, callback) {
                         // 在这里写ajax请求，通过callback方法回调数据
@@ -90,7 +90,7 @@ function openMenuSelecter(pid,callBack){
                     cellMinWidth: true,
                     cols: [
                         { type: "numbers",align:"center"},
-                        { type: "radio" ,title:'请选择',align:"center"},
+                        { type: "radio" ,align:"center"},
                         { field: 'title', title: '菜单名称', align: "center"},
                         { field: 'type', title: '类型', align: "center",templet: function (d) {
                             if (d.type == 'topmenu') {

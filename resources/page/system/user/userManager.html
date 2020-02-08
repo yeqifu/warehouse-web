@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/layuimini.css" media="all">
+    <link rel="stylesheet" href="../../../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+    <title>登陆用户管理</title>
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 搜索信息开始 -->
+            <fieldset class="layui-elem-field layuimini-search">
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="" id="searchFrm">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">用户名称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="name" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">用户地址</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="remark" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">所属部门</label>
+                                <div class="layui-input-inline">
+                                    <input type="hidden" name="deptid" id="p_deptid">
+                                    <input type="text" name="p_deptname" id="p_deptname" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-input-inline" style="margin-top: 1%;">
+                                    <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm" id="doSelectDept"><i class="fa fa-magic"></i></label> 选择</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-block" style="text-align: center;">
+                                <a class="layui-btn layui-btn-sm layui-btn-radius" lay-submit=""
+                                    lay-filter="data-search-btn"><i class="fa fa-search"></i> 搜索</a>
+                                <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm"
+                                    onclick="javascript:$('#searchFrm')[0].reset();$('#p_deptid').val('');" lay-filter="data-search-btn"><i class="fa fa-refresh"></i> 重置</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+            <!-- 搜索信息结束 -->
+
+            <!-- 表格开始 -->
+            <table class="layui-hide" id="userTable" lay-filter="userTable"></table>
+            <script type="text/html" id="userToolBar">
+                <a class="layui-btn layui-btn-sm layui-btn-radius" lay-event="add"><i class="fa fa-plus"></i> 添加用户</a>
+            </script>
+            <script type="text/html" id="userTableBar">
+                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-" lay-event="update"><i class="fa fa-pencil"></i> 修改</a>
+                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" lay-event="delete"><i class="fa fa-trash-o"></i> 删除</a>
+                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" lay-event="selectRole"><i class="fa fa-trash-o"></i> 分配角色</a>
+                <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" lay-event="resetPwd"><i class="fa fa-trash-o"></i> 重置密码</a>
+            </script>
+            <!-- 表格结束 -->
+
+            <script type="text/html" id="availableTpl">
+                <!-- 这里的 checked 的状态只是演示 -->
+                <input type="checkbox" name="available" value="{{d.id}}" lay-skin="switch" lay-text="可用|不可用"
+                    lay-filter="availableSwitch" {{ d.available == 1 ? 'checked' : '' }}>
+            </script>
+
+            <!--添加和修改的弹出层开始-->
+            <div id="addOrUpdateDiv" style="display: none;padding: 15px">
+                <form method="post" class="layui-form layui-form-pane" lay-filter="dataFrm" id="dataFrm">
+                    <div class="layui-form-item" id="div_pid">
+                        <div class="layui-inline" style="padding-top: 3px;">
+                            <label class="layui-form-label">所属部门</label>
+                            <div class="layui-input-inline">
+                                <input type="hidden" name="deptid"" id="deptid" />
+                                <input type="text" id="deptid_name" readonly="readonly" autocomplete="off"
+                                    placeholder="请选择所属部门" class="layui-input">
+                            </div>
+                        </div>
+                        <a class="layui-btn layui-btn-radius layui-btn-warm" id="doAddSelectDept"><i class="fa fa-magic"></i></label> 选择</a>
+                        <div class="layui-inline" style="padding-top: 3px;padding-left: 25px;">
+                            <label class="layui-form-label">入职时间</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="hiredate" id="hiredate" lay-verify="required"
+                                    readonly="readonly" autocomplete="off" placeholder="请选择入职时间" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">领导部门</label>
+                            <div class="layui-input-inline">
+                                <input type="hidden" name="mgr_deptid" id="mgr_deptid">
+                                <input type="text" id="mgr_deptid_name" autocomplete="off" placeholder="请选择领导所属部门" class="layui-input">
+                            </div>
+                        </div>
+                        <a class="layui-btn layui-btn-radius layui-btn-warm" id="doAddMgrSelectDept"><i class="fa fa-magic"></i></label> 选择</a>
+                        <div class="layui-inline" style="padding-left: 25px;">
+                            <label class="layui-form-label">直属领导</label>
+                            <div class="layui-input-inline">
+                                <select name="mgr" id="mgr">
+                                    <option value="">请选择直属领导</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户名称</label>
+                            <div class="layui-input-inline">
+                                <input type="hidden" name="id" />
+                                <input type="text" name="name" lay-verify="required" autocomplete="off"
+                                    placeholder="请输入用户名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="padding-left: 14.4%;">
+                            <label class="layui-form-label">登陆名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="loginname" lay-verify="required" autocomplete="off"
+                                    placeholder="请输入用户登陆名称" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户地址</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="address" autocomplete="off" placeholder="请输入用户地址"
+                                    class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="padding-left: 14.4%;">
+                            <label class="layui-form-label">用户性别</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="sex" value="1" title="男" checked>
+                                <input type="radio" name="sex" value="0" title="女">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">排序码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="ordernum" id="ordernum" lay-verify="required"
+                                    autocomplete="off" placeholder="请输入排序码" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">用户备注</label>
+                        <div class="layui-input-block">
+                            <textarea placeholder="请输入用户备注" name="remark" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item" style="padding-right: 15%;">
+                        <div class="layui-input-block" style="text-align: center;">
+                            <a class="layui-btn layui-btn-sm layui-btn-radius" lay-submit="" lay-filter="doSubmit"><label
+                                    class="layui-icon layui-icon-release"></label>提交</a>
+                            <a class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm" onclick="javascript:$('#dataFrm')[0].reset()"
+                                lay-filter="data-search-btn"><label class="layui-icon layui-icon-refresh"></label>重置</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--添加和修改的弹出层结束-->
+
+            <!-- 选择菜单和权限的弹出层开始 -->
+            <div id="selectMenuDiv" style="display: none;padding: 15px;">
+                <table class="layui-hide" id="menuTable" lay-filter="menuTable"></table>
+            </div>
+
+        </div>
+    </div>
+    <script src="../../../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+    <script src="../../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../../../lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+    <script src="../../../lib/common/jquery.cookie.min.js" charset="utf-8"></script>
+    <script src="../../../lib/common/common.js" charset="utf-8"></script>
+    <script src="../../../lib/common/selectLayer.js" charset="utf-8"></script>
+
+    <script>
+        layui.use(['form', 'table', 'laydate', 'layer'], function () {
+            var $ = layui.jquery;
+            var form = layui.form;
+            var table = layui.table;
+            var laydate = layui.laydate;
+            var layer = layui.layer;
+
+            //渲染时间选择器
+            laydate.render({
+                elem: '#hiredate',
+                type: 'datetime'
+            });
+
+            var tableIns = table.render({
+                elem: '#userTable',
+                toolbar: '#userToolBar',
+                url: api + '/user/queryAllUser',
+                height: "full-205",
+                cols: [[
+                    {field: 'id',title: 'ID',align: "center",width: 60}, 
+                    {field: 'name',title: '用户名称',align: "center",width:150 }, 
+                    {field: 'loginname',title: '用户登陆名',align: "center",width:130 }, 
+                    {field: 'sex',title: '性别',align: "center",width:60,templet:function(p){
+                        return p.sex==1?"男":"女";
+                    }}, 
+                    {field: 'remark',title: '用户备注',align: "center",width:150}, 
+                    {field: 'address',title: '地址',align: "center",width:100}, 
+                    {field: 'deptname',title: '所属部门',align: "center",width:150}, 
+                    {field: 'hiredate',title: '雇佣时间',align: "center",width:180}, 
+                    {field: 'mgrname',title: '上级领导',align: "center",width:150}, 
+                    {field: 'imgpath',title: '用户头像',align: "center",width:150}, 
+                    {field: 'available',title: '是否可用',templet:'#availableTpl',align: "center",width:130}, 
+                    {field: 'ordernum',title: '排序码',align: "center",width:80}, 
+                    {fixed: "right",title: '操作',toolbar: '#userTableBar',align: "center",width:320}
+                ]],
+                page: true
+            });
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                //序列化搜索表单的数据
+                var params = $("#searchFrm").serialize();
+                //执行搜索重载
+                table.reload('userTable', {
+                    page: {
+                        curr: 1
+                    },
+                    url: api + 'user/queryAllUser?' + params
+                });
+                return false;
+            });
+
+            //搜索表单中，选择按钮的点击事件，打开部门选择弹出层
+            $("#doSelectDept").click(function(){
+                openDeptSelecter("", function (id, name) {
+                    $("#p_deptid").val(id);
+                    $("#p_deptname").val(name);
+                });
+            });
+
+            //监听添加和修改弹出层的用户部门选择
+            $("#doAddSelectDept").click(function(){
+                var add_id=$("#deptid").val();
+                openDeptSelecter(add_id,function(id,name){
+                    $("#deptid").val(id);
+                    $("#deptid_name").val(name);
+                });
+            });
+
+            //监听添加和修改弹出层的领导部门选择
+            $("#doAddMgrSelectDept").click(function(){
+                var mgr_add_id=$("#mgr_deptid").val();
+                openDeptSelecter(mgr_add_id,function(id,name){
+                    $("#mgr_deptid").val(id);
+                    $("#mgr_deptid_name").val(name);
+                    
+                    //根据部门ID查询当前部门下面的领导列表
+                    $.get(api+"/user/loadUsersByDeptId",{deptId:id},function (res) {
+                        var users = res.data;
+                        var dom_mgr=$("#mgr");
+                        var html = "<option value=''>请选择直属领导</option>";
+                        $.each(users,function (index, item) {
+                            html+="<option value='"+item.id+"'>"+item.name+"</option>";
+                        });
+                        dom_mgr.html(html);
+                        //重新渲染
+                        form.render("select");
+                    });
+                
+                });
+
+        
+            });
+
+
+            //监听是否可用操作
+            form.on('switch(availableSwitch)', function (obj) {
+                $.post(api + "user/updateUser", { id: this.value, available: obj.elem.checked ? 1 : 0 }, function (res) {
+                    layer.msg(res.msg);
+                    tableIns.reload();
+                });
+            });
+
+            //监听表头工具条事件
+            table.on('toolbar(userTable)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'add':
+                        openAddUser();
+                        break;
+                };
+            });
+
+            var mainIndex;
+            var url;
+            //添加用户
+            function openAddUser(){
+                mainIndex = layer.open({
+                    type:1,
+                    title:'添加用户',
+                    content:$("#addOrUpdateDiv"),
+                    area:['800px','600px'],
+                    success:function(index){
+                        url=api+"user/addUser";
+                        //重置表单数据
+                        $('#dataFrm')[0].reset();
+                        //查询最大排序码
+                        $.get(api+"user/queryUserMaxOrderNum",function(res){
+                            $("#ordernum").val(res.data);
+                        });
+                    }
+                });
+            };
+
+            //监听行工具条的事件
+            table.on('tool(userTable)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'delete') {
+                    layer.confirm('真的要删除【' + data.name + '】这条数据吗？',function(index){
+                        $.post(api+"user/deleteUser",{ id: data.id }, function (res) {
+                            layer.msg(res.msg);
+                            obj.del();
+                            layer.close(index);
+                        });
+                    });
+                }else if(obj.event === 'update'){
+                    openUpdateUser(data);
+                }else if(obj.event === 'selectMenu'){
+                    openSelectMenu(data);
+                }
+            });
+
+            //修改用户
+            function openUpdateUser(data){
+                mainIndex = layer.open({
+                    type:1,
+                    title:'修改['+data.name+']公告',
+                    content:$("#addOrUpdateDiv"),
+                    area:['800px','600px'],
+                    success:function(index){
+                        url=api+"user/updateUser";
+                        //回显数据
+                        form.val("dataFrm",data);
+                        $.get(api+"dept/getDeptById",{id:data.deptid},function(res){
+                            $("#deptid_name").val(res.data.title);
+                        });
+                    }
+                });
+            }
+            //监控提交的按钮
+            form.on("submit(doSubmit)",function(data){
+                var params = $("#dataFrm").serialize();
+                $.post(url,params,function(res){
+                    layer.msg(res.msg);
+                    if(res.code==200){
+                        tableIns.reload();
+                    }
+                    layer.close(mainIndex);
+                });
+                return false;
+            });
+
+
+            //打开选择菜单和权限的弹出层
+            function openSelectMenu(data_table){
+                var table_MenusIns;
+                mainIndex = layer.open({
+                    type:1,
+                    title:'分配['+data_table.name+']用户、权限和菜单',
+                    content:$("#selectMenuDiv"),
+                    area:['700px','500px'],
+                    btn:['<span class="layui-icon layui-icon-ok">确认分配</span>'],
+                    btnAlign: 'c',
+                    yes:function(){
+                        var m = table_MenusIns.checkStatus();
+                        var rid = data_table.id;
+                        var params="rid="+rid;
+                        $.each(m,function(x,item){
+                            params+="&mids="+item.id;
+                        });
+                        $.post(api+"user/saveUserMenu",params,function(res){
+                            layer.msg(res.msg);
+                            layer.close(mainIndex);
+                        })
+                    },
+                    success:function(index){
+                        table_MenusIns = treeTable.render({
+                            tree: {
+                                iconIndex: 1,  // 折叠图标显示在第几列
+                                idName: 'id',  // 自定义id字段的名称
+                                pidName: 'pid',  // 自定义标识是否还有子节点的字段名称
+                                isPidData: true,  // 是否是pid形式数据
+                                openName: 'spread'  // 自定义默认展开的字段名
+                            },
+                            elem: '#menuTable',
+                            cellMinWidth: true,
+                            cols: [
+                                { type: "checkbox",align:"center"},
+                                { field: 'title', title: '权限和菜单名称'},
+                                { field: 'id', title: 'ID'},
+                                { field: 'type', title: '类型', align: "center",templet: function (d) {
+                                    if (d.type == 'topmenu') {
+                                        return '<span class="layui-badge layui-bg-red">顶部菜单</span>';
+                                    }
+                                    if (d.type == 'leftmenu') {
+                                        return '<span class="layui-badge layui-bg-blue">左侧菜单</span>';
+                                    } else {
+                                        return '<span class="layui-badge layui-bg-green">权限</span>';
+                                    }
+                                }},
+                            ],
+                            reqData: function (data, callback) {
+                                if(data==undefined){
+                                    // 在这里写ajax请求，通过callback方法回调数据
+                                    $.get(api + 'menu/loadAllMenu?available=1', function (res) {
+                                        callback(res.data);  // 参数是数组类型
+                                        //选中已选中的权限或菜单
+                                        $.get(api+"user/queryMenuIdsByRid",{id:data_table.id},function(rs){
+                                            
+                                            var x = new Array();
+                                            $.each(res.data,function(i,i_1){
+                                                $.each(rs.data,function(j,j_1) {
+                                                    if(i_1.id==j_1){
+                                                        if(!i_1.children){
+                                                            x.push(j_1);
+                                                        }
+                                                    }
+                                                })
+                                            });
+                                            //进行反选
+                                            table_MenusIns.setChecked(x);
+                                        });
+                                    });
+                                }else{
+                                    callback([]);
+                                }
+                                
+                            }
+                        });
+                    }
+                });
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>

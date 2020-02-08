@@ -96,10 +96,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="layui-form-item">
+                    <div class="layui-form-item layui-form-text">
                         <label class="layui-form-label">角色备注</label>
                         <div class="layui-input-block">
-                            <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+                            <textarea name="remark" placeholder="请输入内容" class="layui-textarea" rows="7"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -201,7 +201,7 @@
                     type:1,
                     title:'添加角色',
                     content:$("#addOrUpdateDiv"),
-                    area:['700px','500px'],
+                    area:['700px','440px'],
                     success:function(index){
                         url=api+"role/addRole";
                         //重置表单数据
@@ -234,7 +234,7 @@
                     type:1,
                     title:'修改['+data.name+']公告',
                     content:$("#addOrUpdateDiv"),
-                    area:['700px','500px'],
+                    area:['700px','440px'],
                     success:function(index){
                         url=api+"role/updateRole";
                         //回显数据

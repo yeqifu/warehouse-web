@@ -58,8 +58,39 @@
             <!--表格结束-->
 
             <!--添加和修改的弹出层开始-->
-            <div id="addOrUpdateDiv" style="display: none;padding: 0.3125rem">
+            <div id="addOrUpdateDiv" style="display: none;padding: 15px">
                 <form method="post" class="layui-form layui-form-pane" lay-filter="dataFrm" id="dataFrm">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">部门名称</label>
+                            <div class="layui-input-inline">
+                                <input type="hidden" name="id" />
+                                <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入部门名称" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">部门地址</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="address" autocomplete="off" placeholder="请输入部门地址" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">排序码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="ordernum" id="ordernum" lay-verify="required"
+                                    autocomplete="off" placeholder="请输入排序码" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">创建时间</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="createtime" id="createTime" lay-verify="required"
+                                    readonly="readonly" autocomplete="off" placeholder="请选择创建时间" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
                     <div class="layui-form-item" id="div_pid">
                         <div class="layui-inline" style="padding-top: 3px;">
                             <label class="layui-form-label">父级部门</label>
@@ -70,42 +101,11 @@
                             </div>
                         </div>
                         <a class="layui-btn layui-btn-radius layui-btn-warm" id="doSelectDept"><i class="fa fa-magic"></i></label> 选择</a>
-                        <div class="layui-inline" style="padding-top: 3px;padding-left: 40px;">
-                            <label class="layui-form-label">创建时间</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="createtime" id="createTime" lay-verify="required"
-                                    readonly="readonly" autocomplete="off" placeholder="请选择创建时间" class="layui-input">
-                            </div>
-                        </div>
                     </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">部门名称</label>
-                        <div class="layui-input-block">
-                            <input type="hidden" name="id" />
-                            <input type="text" name="title" lay-verify="required" autocomplete="off"
-                                placeholder="请输入部门名称" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">部门地址</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="address" autocomplete="off" placeholder="请输入部门地址"
-                                class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
+                    <div class="layui-form-item layui-form-text">
                         <label class="layui-form-label">部门备注</label>
                         <div class="layui-input-block">
-                            <textarea placeholder="请输入部门备注" name="remark" class="layui-textarea"></textarea>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">排序码</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="ordernum" id="ordernum" lay-verify="required"
-                                    autocomplete="off" placeholder="请输入排序码" class="layui-input">
-                            </div>
+                            <textarea placeholder="请输入部门备注" name="remark" class="layui-textarea" rows="7"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item" style="padding-right: 15%;">
@@ -234,7 +234,7 @@
                     type: 1,
                     title: '添加部门',
                     content: $("#addOrUpdateDiv"),
-                    area: ['800px', '500px'],
+                    area: ['750px', '530px'],
                     success: function (index) {
                         url = api + "dept/addDept";
                         //重置表单
@@ -252,7 +252,7 @@
                     type: 1,
                     title: '修改[' + data.title + ']部门',
                     content: $("#addOrUpdateDiv"),
-                    area: ['800px', '500px'],
+                    area: ['750px', '530px'],
                     success: function (index) {
                         url = api + "dept/updateDept";
                         if (data.pid == 0) {//说明是根部门
@@ -264,6 +264,8 @@
                         form.val("dataFrm", data);
                         $.get(api + "dept/getDeptById", { id: data.pid }, function (res) {
                             $("#p_name").val(res.data.title);
+                            // alert(res.data.title);
+                            alert(res.data);
                         })
                     }
                 });
