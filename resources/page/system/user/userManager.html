@@ -84,8 +84,7 @@
                             <label class="layui-form-label">所属部门</label>
                             <div class="layui-input-inline">
                                 <input type="hidden" name="deptid"" id="deptid" />
-                                <input type="text" id="deptid_name" readonly="readonly" autocomplete="off"
-                                    placeholder="请选择所属部门" class="layui-input">
+                                <input type="text" id="deptid_name" readonly="readonly" autocomplete="off" placeholder="请选择所属部门" class="layui-input">
                             </div>
                         </div>
                         <a class="layui-btn layui-btn-radius layui-btn-warm" id="doAddSelectDept"><i class="fa fa-magic"></i></label> 选择</a>
@@ -175,10 +174,11 @@
             </div>
             <!--添加和修改的弹出层结束-->
 
-            <!-- 选择菜单和权限的弹出层开始 -->
-            <div id="selectMenuDiv" style="display: none;padding: 15px;">
-                <table class="layui-hide" id="menuTable" lay-filter="menuTable"></table>
+            <!-- 给用户分配角色弹出层开始 -->
+            <div id="selectRoleDiv" style="display: none;padding: 15px;">
+                <table class="layui-hide" id="roleTable" lay-filter="roleTable"></table>
             </div>
+            <!-- 给用户分配角色弹出层结束 -->
 
         </div>
     </div>
@@ -218,9 +218,9 @@
                     }}, 
                     {field: 'remark',title: '用户备注',align: "center",width:150}, 
                     {field: 'address',title: '地址',align: "center",width:100}, 
+                    {field: 'mgrname',title: '上级领导',align: "center",width:150}, 
                     {field: 'deptname',title: '所属部门',align: "center",width:150}, 
                     {field: 'hiredate',title: '雇佣时间',align: "center",width:180}, 
-                    {field: 'mgrname',title: '上级领导',align: "center",width:150}, 
                     {field: 'imgpath',title: '用户头像',align: "center",width:150}, 
                     {field: 'available',title: '是否可用',templet:'#availableTpl',align: "center",width:130}, 
                     {field: 'ordernum',title: '排序码',align: "center",width:80}, 
@@ -329,17 +329,23 @@
             table.on('tool(userTable)', function (obj) {
                 var data = obj.data;
                 if (obj.event === 'delete') {
-                    layer.confirm('真的要删除【' + data.name + '】这条数据吗？',function(index){
+                    layer.confirm('真的要删除【' + data.name + '】这个用户吗？',function(index){
                         $.post(api+"user/deleteUser",{ id: data.id }, function (res) {
                             layer.msg(res.msg);
-                            obj.del();
-                            layer.close(index);
+                            if(res.code==200){
+                                obj.del();
+                                layer.close(index);
+                            }
                         });
                     });
                 }else if(obj.event === 'update'){
                     openUpdateUser(data);
                 }else if(obj.event === 'selectMenu'){
                     openSelectMenu(data);
+                }else if(obj.event === 'resetPwd'){
+                    openResetPwd(data);
+                }else if(obj.event === 'selectRole'){
+                    openSelectRole(data);
                 }
             });
 
@@ -354,12 +360,39 @@
                         url=api+"user/updateUser";
                         //回显数据
                         form.val("dataFrm",data);
+                        $("#deptid_name").val('');
+                        $("#mgr_deptid_name").val('');
+                        $("#mgr").val('');
+                        //回显所属部门
                         $.get(api+"dept/getDeptById",{id:data.deptid},function(res){
                             $("#deptid_name").val(res.data.title);
+                        });
+                        //回显领导所属部门
+                        console.log(data);
+                        $.get(api+"user/loadUserById",{id:data.mgr},function(res2){
+                            $.get(api+"dept/getDeptById",{id:res2.deptid},function(res4){
+                                $("#mgr_deptid_name").val(res4.data.title);
+                            });
+                        });
+                        //回显该用户直属领导,拿到领导ID然后去userController调用loadUserById
+                        var leaderid=data.mgr;
+                        $.get(api+"user/loadUserById",{id:leaderid},function(res3){
+                            var dom_mgr=$("#mgr");
+                            var html="<option value=''>请选择直属领导</option>";
+                            console.log(res3);
+                            // $.each(res3,function(index,item){
+                            //     html+="<option value='"+item.id+"'>"+item.name+"</option>";
+                            // });
+                            html+="<option value='"+res3.id+"'>"+res3.name+"</option>";
+                            dom_mgr.html(html);
+                            dom_mgr.val(leaderid);
+                            //重新渲染
+                            form.render("select");
                         });
                     }
                 });
             }
+
             //监控提交的按钮
             form.on("submit(doSubmit)",function(data){
                 var params = $("#dataFrm").serialize();
@@ -373,82 +406,50 @@
                 return false;
             });
 
+            //重置密码
+            function openResetPwd(data){
+                layer.confirm('真的要重置【'+data.name+'】的密码吗？',function(){
+                    $.post(api+"user/resetUserPwd",{id:data.id},function(res){
+                        layer.msg(res.msg);
+                    });
+                });
+            }
 
-            //打开选择菜单和权限的弹出层
-            function openSelectMenu(data_table){
-                var table_MenusIns;
+
+            //打开选择角色的弹出层
+            function openSelectRole(data_table){
+                var table_RolesIns;
                 mainIndex = layer.open({
                     type:1,
-                    title:'分配['+data_table.name+']用户、权限和菜单',
-                    content:$("#selectMenuDiv"),
+                    title:'给【'+data_table.name+'】分配角色',
+                    content:$("#selectRoleDiv"),
                     area:['700px','500px'],
                     btn:['<span class="layui-icon layui-icon-ok">确认分配</span>'],
                     btnAlign: 'c',
                     yes:function(){
-                        var m = table_MenusIns.checkStatus();
-                        var rid = data_table.id;
-                        var params="rid="+rid;
+                        var checkStatus = table.checkStatus('roleTable');
+                        var m = checkStatus.data;
+                        var uid = data_table.id;
+                        var params="uid="+uid;
                         $.each(m,function(x,item){
-                            params+="&mids="+item.id;
+                            params+="&rids="+item.id;
                         });
-                        $.post(api+"user/saveUserMenu",params,function(res){
+                        $.post(api+"user/saveUserRole",params,function(res){
                             layer.msg(res.msg);
                             layer.close(mainIndex);
                         })
                     },
                     success:function(index){
-                        table_MenusIns = treeTable.render({
-                            tree: {
-                                iconIndex: 1,  // 折叠图标显示在第几列
-                                idName: 'id',  // 自定义id字段的名称
-                                pidName: 'pid',  // 自定义标识是否还有子节点的字段名称
-                                isPidData: true,  // 是否是pid形式数据
-                                openName: 'spread'  // 自定义默认展开的字段名
-                            },
-                            elem: '#menuTable',
-                            cellMinWidth: true,
-                            cols: [
-                                { type: "checkbox",align:"center"},
-                                { field: 'title', title: '权限和菜单名称'},
-                                { field: 'id', title: 'ID'},
-                                { field: 'type', title: '类型', align: "center",templet: function (d) {
-                                    if (d.type == 'topmenu') {
-                                        return '<span class="layui-badge layui-bg-red">顶部菜单</span>';
-                                    }
-                                    if (d.type == 'leftmenu') {
-                                        return '<span class="layui-badge layui-bg-blue">左侧菜单</span>';
-                                    } else {
-                                        return '<span class="layui-badge layui-bg-green">权限</span>';
-                                    }
-                                }},
-                            ],
-                            reqData: function (data, callback) {
-                                if(data==undefined){
-                                    // 在这里写ajax请求，通过callback方法回调数据
-                                    $.get(api + 'menu/loadAllMenu?available=1', function (res) {
-                                        callback(res.data);  // 参数是数组类型
-                                        //选中已选中的权限或菜单
-                                        $.get(api+"user/queryMenuIdsByRid",{id:data_table.id},function(rs){
-                                            
-                                            var x = new Array();
-                                            $.each(res.data,function(i,i_1){
-                                                $.each(rs.data,function(j,j_1) {
-                                                    if(i_1.id==j_1){
-                                                        if(!i_1.children){
-                                                            x.push(j_1);
-                                                        }
-                                                    }
-                                                })
-                                            });
-                                            //进行反选
-                                            table_MenusIns.setChecked(x);
-                                        });
-                                    });
-                                }else{
-                                    callback([]);
-                                }
-                                
-                            }
+                        table_RolesIns = table.render({
+                            elem: '#roleTable',
+                            toolbar: false,
+                            url: api + '/role/loadAllAvailableRoleNoPage?userId='+data_table.id,
+                            cols: [[
+                                {type: "checkbox",  fixed: "left"},
+                                {field: 'id',title: 'ID',align: "center",width: 75}, 
+                                {field: 'name',title: '角色名称',align: "center",width:170 }, 
+                                {field: 'remark',title: '角色备注',align: "center",width:370}, 
+                            ]],
                         });
                     }
                 });
